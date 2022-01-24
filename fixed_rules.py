@@ -1,9 +1,7 @@
 from nltk.corpus import stopwords
 
-# Omkar Pathak
 NAME_PATTERN      = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
 
-# Education (Upper Case Mandatory)
 EDUCATION         = [
                     'BE','B.E.', 'B.E', 'BS', 'B.S', 'ME', 'M.E', 'M.E.', 'MS', 'M.S', 'BTECH', 'MTECH', 
                     'SSC', 'HSC', 'CBSE', 'ICSE', 'X', 'XII'
@@ -22,6 +20,8 @@ YEAR              = r'(((20|19)(\d{2})))'
 STOPWORDS         = set(stopwords.words('english'))
 
 RESUME_SECTIONS = [
+                    'about'
+                    'summary'
                     'accomplishments',
                     'experience',
                     'education',
@@ -30,6 +30,8 @@ RESUME_SECTIONS = [
                     'professional experience',
                     'publications',
                     'skills',
+                    'certificates',
+                    'awards'
                 ]
 
 COMPETENCIES = {
