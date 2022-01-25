@@ -22,8 +22,8 @@ STOPWORDS         = set(stopwords.words('english'))
 RESUME_SECTIONS = [
                     'about'
                     'summary'
-                    'objective'​,
- ​                   'career objective'​,
+                    'objective',
+                    'career objective',
                     'accomplishments',
                     'experience',
                     'education',
@@ -33,9 +33,9 @@ RESUME_SECTIONS = [
                     'publications',
                     'skills',
                     'awards',
- ​                   'certifications'​, 
- ​                   'leadership'
-                ]
+                    'certifications', 
+                    'leadership'
+                    ]
 
 COMPETENCIES = {
     'teamwork': [
