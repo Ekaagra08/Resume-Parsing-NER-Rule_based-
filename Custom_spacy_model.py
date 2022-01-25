@@ -1,19 +1,18 @@
+import json
+import re
+import random
+import logging
+from sklearn.metrics import classification_report
+from sklearn.metrics import precision_recall_fscore_support
+from spacy.gold import GoldParse
+from spacy.scorer import Scorer
+from sklearn.metrics import accuracy_score
+
+import spacy
+from spacy import displacy
+!python -m spacy download en_core_web_md
+import en_core_web_md
  
-​from​ __future__ ​import​ ​unicode_literals 
-​from​ __future__ ​import​ ​print_function 
-​import​ ​re 
-​import​ ​plac 
-​import​ random 
-​from​ ​pathlib​ ​import​ ​Path 
-import​ ​spacy 
-​import​ ​json 
-​import​ ​logging 
-
-
-​# new entity label 
-​LABEL​ ​=​ ​"COL_NAME" 
-
-  
   
 def convert_json_for_spacy(FilePath):
     try:
@@ -167,3 +166,8 @@ for i in d:
     print("Precision : "+str(d[i][1]/d[i][5]))
     print("Recall : "+str(d[i][2]/d[i][5]))
     print("F-score : "+str(d[i][3]/d[i][5]))
+
+import pickle
+
+filename = 'NER_model.pkl'
+pickle.dump(nlp, open(filename, 'wb'))    
