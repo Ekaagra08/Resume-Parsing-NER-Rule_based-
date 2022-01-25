@@ -12,94 +12,75 @@
   
  ​# new entity label 
  ​LABEL​ ​=​ ​"COL_NAME" 
-  
- ​# training data 
- ​# Note: If you're using an existing model, make sure to mix in examples of 
- ​# other entity types that spaCy correctly recognized before. Otherwise, your 
- ​# model might learn the new type, but "forget" what it previously knew. 
- ​# https://explosion.ai/blog/pseudo-rehearsal-catastrophic-forgetting 
-  
- ​# training data 
- ​# TRAIN_DATA = [ 
- ​#     ("i study in maria college", {"entities": [(11, 24, LABEL)]}), 
- ​#     ("completed graduation from napier university (edinburgh, 
- ​#       united kingdom)", {"entities": [(26, 43, LABEL)]}), 
- ​#     ("studied in school of continuing and professional studies", 
- ​#       {"entities": [(11, 16, LABEL)]}), 
- ​#     ("studied at chinese university of hong kong", {"entities": 
- ​#       [(11, 29, LABEL)]}), 
- ​#     ("studied in University of Strathclyde", {"entities": 
- ​#       [(11, 37, LABEL)]}), 
- ​# ] 
+
   
   
- ​def​ ​trim_entity_spans​(​data​: ​list​) ​->​ ​list​: 
- ​    ​"""Removes leading and trailing white spaces from entity spans. 
+def convert_json_for_spacy(FilePath):
+    try:
+      converted_data = []
+      lines=[]
+      with open(FilePath, 'r') as f:
+          lines = f.readlines()
+
+      for line in lines:
+          data = json.loads(line)
+          text = data['content'].replace("\n", " ")
+          entities = []
+          data_annotations = data['annotation']
+          if data_annotations is not None:
+              for annotation in data_annotations:
+                  #only a single point in text annotation.
+                  point = annotation['points'][0]
+                  labels = annotation['label']
+                  # handle both list of labels or a single label.
+                  if not isinstance(labels, list):
+                      labels = [labels]
+
+                  for label in labels:
+                      point_start = point['start']
+                      point_end = point['end']
+                      point_text = point['text']
+
+                      lstrip_diff = len(point_text) - len(point_text.lstrip())
+                      rstrip_diff = len(point_text) - len(point_text.rstrip())
+                      if lstrip_diff != 0:
+                          point_start = point_start + lstrip_diff
+                      if rstrip_diff != 0:
+                          point_end = point_end - rstrip_diff
+                      entities.append((point_start, point_end + 1 , label))
+          
+          converted_data.append((text, {"entities" : entities}))
+      return converted_data
+      
+    except Exception as e:
+      logging.exception("Unable to process " + FilePath + "\n" + "error = " + str(e))
+      return None    
+
+################################################################################################
+
+def trim_entity_spans(data: list) -> list:
+# removes extra white spaces from entity span to prevent overlaping
+    invalid_span_tokens = re.compile(r'\s')
+
+    cleaned_data = []
+    for text, annotations in data:
+        entities = annotations['entities']
+        valid_entities = []
+        for start, end, label in entities:
+            valid_start = start
+            valid_end = end
+            while valid_start < len(text) and invalid_span_tokens.match(
+                    text[valid_start]):
+                valid_start += 1
+            while valid_end > 1 and invalid_span_tokens.match(
+                    text[valid_end - 1]):
+                valid_end -= 1
+            valid_entities.append([valid_start, valid_end, label])
+        cleaned_data.append([text, {'entities': valid_entities}])
+    
+    return cleaned_data
   
- ​    Args: 
- ​        data (list): The data to be cleaned in spaCy JSON format. 
-  
- ​    Returns: 
- ​        list: The cleaned data. 
- ​    """ 
- ​    ​invalid_span_tokens​ ​=​ ​re​.​compile​(​r'\s'​) 
-  
- ​    ​cleaned_data​ ​=​ [] 
- ​    ​for​ ​text​, ​annotations​ ​in​ ​data​: 
- ​        ​entities​ ​=​ ​annotations​[​'entities'​] 
- ​        ​valid_entities​ ​=​ [] 
- ​        ​for​ ​start​, ​end​, ​label​ ​in​ ​entities​: 
- ​            ​valid_start​ ​=​ ​start 
- ​            ​valid_end​ ​=​ ​end 
- ​            ​while​ ​valid_start​ ​<​ ​len​(​text​) ​and​ ​invalid_span_tokens​.​match​( 
- ​                    ​text​[​valid_start​]): 
- ​                ​valid_start​ ​+=​ ​1 
- ​            ​while​ ​valid_end​ ​>​ ​1​ ​and​ ​invalid_span_tokens​.​match​( 
- ​                    ​text​[​valid_end​ ​-​ ​1​]): 
- ​                ​valid_end​ ​-=​ ​1 
- ​            ​valid_entities​.​append​([​valid_start​, ​valid_end​, ​label​]) 
- ​        ​cleaned_data​.​append​([​text​, {​'entities'​: ​valid_entities​}]) 
-  
- ​    ​return​ ​cleaned_data 
-  
-  
- ​def​ ​convert_dataturks_to_spacy​(​dataturks_JSON_FilePath​): 
- ​    ​try​: 
- ​        ​training_data​ ​=​ [] 
- ​        ​lines​ ​=​ [] 
- ​        ​with​ ​open​(​dataturks_JSON_FilePath​, ​'r'​, ​encoding​=​"utf8"​) ​as​ ​f​: 
- ​            ​lines​ ​=​ ​f​.​readlines​() 
-  
- ​        ​for​ ​line​ ​in​ ​lines​: 
- ​            ​data​ ​=​ ​json​.​loads​(​line​) 
- ​            ​text​ ​=​ ​data​[​'content'​] 
- ​            ​entities​ ​=​ [] 
- ​            ​if​ ​data​[​'annotation'​] ​is​ ​not​ ​None​: 
- ​                ​for​ ​annotation​ ​in​ ​data​[​'annotation'​]: 
- ​                    ​# only a single point in text annotation. 
- ​                    ​point​ ​=​ ​annotation​[​'points'​][​0​] 
- ​                    ​labels​ ​=​ ​annotation​[​'label'​] 
- ​                    ​# handle both list of labels or a single label. 
- ​                    ​if​ ​not​ ​isinstance​(​labels​, ​list​): 
- ​                        ​labels​ ​=​ [​labels​] 
-  
- ​                    ​for​ ​label​ ​in​ ​labels​: 
- ​                        ​# dataturks indices are both inclusive [start, end] 
- ​                        ​# but spacy is not [start, end) 
- ​                        ​entities​.​append​(( 
- ​                            ​point​[​'start'​], 
- ​                            ​point​[​'end'​] ​+​ ​1​, 
- ​                            ​label 
- ​                        )) 
-  
- ​            ​training_data​.​append​((​text​, {​"entities"​: ​entities​})) 
- ​        ​return​ ​training_data 
- ​    ​except​ ​Exception​: 
- ​        ​logging​.​exception​(​"Unable to process "​ ​+​ ​dataturks_JSON_FilePath​) 
- ​        ​return​ ​None 
-  
-  
- ​TRAIN_DATA​ ​=​ ​trim_entity_spans​(​convert_dataturks_to_spacy​(​"traindata.json"​)) 
+train_data_clean = trim_entity_spans(convert_json_for_spacy("/content/drive/MyDrive/Resume Parsing (NER + Rule-based)/traindata.json"))
   
   
  ​@​plac​.​annotations​( 
