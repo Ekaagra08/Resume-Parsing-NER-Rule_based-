@@ -1,15 +1,13 @@
- 
- ​import​ ​os 
- ​import​ ​multiprocessing​ ​as​ ​mp 
- ​import​ ​io 
- ​import​ ​spacy 
- ​import​ ​pprint 
- ​from​ ​spacy​.​matcher​ ​import​ ​Matcher 
- ​from​ . ​import​ ​utils 
-  
-  
- ​class​ ​ResumeParser​(​object​): 
-  
+import io
+import multiprocessing as mp
+import os
+import pprint
+import spacy
+from spacy.matcher import Matcher
+from . import utils
+
+​class​ ​ResumeParser​(​object​):
+
  ​    ​def​ ​__init__​( 
  ​        ​self​, 
  ​        ​resume​, 
@@ -21,18 +19,19 @@
  ​        ​self​.​__skills_file​ ​=​ ​skills_file 
  ​        ​self​.​__custom_regex​ ​=​ ​custom_regex 
  ​        ​self​.​__matcher​ ​=​ ​Matcher​(​nlp​.​vocab​) 
- ​        ​self​.​__details​ ​=​ { 
- ​            ​'name'​: ​None​, 
- ​            ​'email'​: ​None​, 
- ​            ​'mobile_number'​: ​None​, 
- ​            ​'skills'​: ​None​, 
- ​            ​'college_name'​: ​None​, 
- ​            ​'degree'​: ​None​, 
- ​            ​'designation'​: ​None​, 
- ​            ​'experience'​: ​None​, 
- ​            ​'company_names'​: ​None​, 
- ​            ​'no_of_pages'​: ​None​, 
- ​            ​'total_experience'​: ​None​, 
+ ​        ​self​.​__details​ ​=​ {
+            'about': None, 
+​            ​'name'​: ​None​, 
+​            ​'email'​: ​None​, 
+​            ​'mobile_number'​: ​None​, 
+​            ​'skills'​: ​None​, 
+​            ​'college_name'​: ​None​, 
+​            ​'degree'​: ​None​, 
+​            ​'designation'​: ​None​, 
+​            ​'experience'​: ​None​, 
+​            ​'company_names'​: ​None​, 
+​            ​'no_of_pages'​: ​None​, 
+​            ​'total_experience'​: ​None​, 
  ​        } 
  ​        ​self​.​__resume​ ​=​ ​resume 
  ​        ​if​ ​not​ ​isinstance​(​self​.​__resume​, ​io​.​BytesIO​): 
@@ -146,5 +145,5 @@
  ​    ] 
   
  ​    ​results​ ​=​ [​p​.​get​() ​for​ ​p​ ​in​ ​results​] 
-  
+
  ​    ​pprint​.​pprint​(​results​)
