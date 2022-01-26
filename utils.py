@@ -51,8 +51,11 @@ class resparser():
     ''' returns: Text format of parsed PDF resume '''
     return self.textblob
 
-​def​ ​extract_text​(​file_path​, ​extension​): 
-
+def extract_text(filepath, ext):
+    if ext == ".pdf":
+        return resparser(filepath) 
+    else:
+        return "Please input PDF"
 
 
 ​def​ ​extract_entity_sections_grad​(​text​): 
