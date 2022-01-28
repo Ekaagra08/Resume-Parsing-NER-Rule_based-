@@ -1,4 +1,7 @@
 
+from html import entities
+
+
 ​import​ ​io 
 ​import​ ​os 
 ​import​ ​re 
@@ -59,46 +62,22 @@ def extract_text(filepath, ext):
 
 
 def extract_section(text):
-    
-​    ​text_split​ ​=​ [​i​.​strip​() ​for​ ​i​ ​in​ ​text​.​split​(​'​\n​'​)] 
-​    ​# sections_in_resume = [i for i in text_split if i.lower() in sections] 
-​    ​entities​ ​=​ {} 
-​    ​key​ ​=​ ​False 
-​    ​for​ ​phrase​ ​in​ ​text_split​: 
-​        ​if​ ​len​(​phrase​) ​==​ ​1​: 
-​            ​p_key​ ​=​ ​phrase 
-​        ​else​: 
-​            ​p_key​ ​=​ ​set​(​phrase​.​lower​().​split​()) ​&​ ​set​(​cs​.​RESUME_SECTIONS_GRAD​) 
-​        ​try​: 
-​            ​p_key​ ​=​ ​list​(​p_key​)[​0​] 
-​        ​except​ ​IndexError​: 
-​            ​pass 
-​        ​if​ ​p_key​ ​in​ ​cs​.​RESUME_SECTIONS_GRAD​: 
-​            ​entities​[​p_key​] ​=​ [] 
-​            ​key​ ​=​ ​p_key 
-​        ​elif​ ​key​ ​and​ ​phrase​.​strip​(): 
-​            ​entities​[​key​].​append​(​phrase​) 
-
-​    ​# entity_key = False 
-​    ​# for entity in entities.keys(): 
-​    ​#     sub_entities = {} 
-​    ​#     for entry in entities[entity]: 
-​    ​#         if u'\u2022' not in entry: 
-​    ​#             sub_entities[entry] = [] 
-​    ​#             entity_key = entry 
-​    ​#         elif entity_key: 
-​    ​#             sub_entities[entity_key].append(entry) 
-​    ​#     entities[entity] = sub_entities 
-
-​    ​# pprint.pprint(entities) 
-
-​    ​# make entities that are not found None 
-​    ​# for entity in cs.RESUME_SECTIONS: 
-​    ​#     if entity not in entities.keys(): 
-​    ​#         entities[entity] = None 
-​    ​return​ ​entities 
-
-
+  txt_lines = [sent.strip() for sent in text.split("\n") ]
+  entities = {}
+  key=False
+  for word in txt_lines:
+    if len(word)==1:
+      s_key = word
+    else:
+      s_key = set(word.lower.split()) & set(cs.RESUME_SECTIONS)
+      s_key = list(s_key)[0]
+    if s_key in cs.RESUME_SECTIONS:
+      entities[s_key]=[]
+      key =s_key
+    elif key and word.strip():
+      entities[key].append(word)    
+  return entities
+ 
 ​def​ ​extract_entities_wih_custom_model​(​custom_nlp_text​): 
 ​    ​''' 
 ​    Helper function to extract different entities with custom 
