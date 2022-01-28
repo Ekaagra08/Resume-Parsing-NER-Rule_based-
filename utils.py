@@ -77,7 +77,18 @@ def extract_section(text):
     elif key and word.strip():
       entities[key].append(word)    
   return entities
- 
+
+def custom_entities(custom_spacy_txt):
+  entities={}
+  for ent in  custom_spacy_txt.ents:
+    if ent.label not in entities.keys():
+      entities[ent.lable_] =[ent.text]
+    else:
+      entities[ent.lable_].append(ent.text)
+
+  for key in entities.keys():
+    entities[key]    
+
 ​def​ ​extract_entities_wih_custom_model​(​custom_nlp_text​): 
 ​    ​''' 
 ​    Helper function to extract different entities with custom 
