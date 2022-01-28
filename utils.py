@@ -58,14 +58,8 @@ def extract_text(filepath, ext):
         return "Please input PDF"
 
 
-​def​ ​extract_entity_sections_grad​(​text​): 
-​    ​''' 
-​    Helper function to extract all the raw text from sections of 
-​    resume specifically for graduates and undergraduates 
-
-​    :param text: Raw text of resume 
-​    :return: dictionary of entities 
-​    ''' 
+def extract_section(text):
+    
 ​    ​text_split​ ​=​ [​i​.​strip​() ​for​ ​i​ ​in​ ​text​.​split​(​'​\n​'​)] 
 ​    ​# sections_in_resume = [i for i in text_split if i.lower() in sections] 
 ​    ​entities​ ​=​ {} 
